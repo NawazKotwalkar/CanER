@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - ER Wait Time Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container { max-width: 900px; }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .report-header h2 {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        /* Report Form */
+        .report-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .report-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .report-form .form-group {
+            margin-bottom: 0;
+        }
+        
+        .report-form label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .report-form select,
+        .report-form input {
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-input);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            min-height: 44px;
+            width: 100%;
+        }
+        
+        .report-form select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        
+        .btn-primary {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-secondary {
+            padding: 12px 24px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-input-hover);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+        
+        /* Report Preview */
+        .report-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .report-preview.show {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .report-preview h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .report-preview .preview-content {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+        }
+        
+        /* Scheduled Reports */
+        .scheduled-reports {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        
+        .scheduled-reports h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .schedule-item:last-child { margin-bottom: 0; }
+        .schedule-item .schedule-info { color: var(--text-secondary); font-size: 14px; }
+        .schedule-item .schedule-info strong { color: var(--text-primary); }
+        .schedule-item .schedule-actions { display: flex; gap: 8px; }
+        .schedule-item .schedule-actions button {
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .schedule-item .schedule-actions button:hover {
+            background: var(--bg-input-hover);
+        }
+        .schedule-item .schedule-actions button.delete:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        .loading-state.show { display: block; }
+        .loading-state .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        .loading-state p { color: var(--text-muted); }
+        
+        .badge-scheduled {
+            background: #3b82f6;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* Responsive */
+        @media screen and (max-width: 600px) {
+            .report-form .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .report-actions {
+                flex-direction: column;
+            }
+            .report-actions button {
+                width: 100%;
+                justify-content: center;
+            }
+            .schedule-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width:900px;">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left">
+                    <span class="logo">📧</span>
+                    <div>
+                        <h1>Email Reports</h1>
+                        <p class="subtitle">Get insights delivered to your inbox • Canadian Healthcare</p>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+        
+        <a href="/" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;color:var(--text-secondary);text-decoration:none;font-size:14px;font-weight:600;padding:10px 16px;border-radius:10px;background:var(--bg-input);border:1px solid var(--border-color);transition:all 0.3s ease;margin-bottom:12px;">← Back to Predictor</a>
+        
+        <!-- Report Form -->
+        <div class="report-form">
+            <h3 style="color:var(--text-primary);font-weight:600;margin-bottom:16px;">📊 Generate Report</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reportType">Report Type</label>
+                    <select id="reportType">
+                        <option value="daily">Daily Summary</option>
+                        <option value="weekly">Weekly Trend Report</option>
+                        <option value="peak">Peak Hours Analysis</option>
+                        <option value="custom">Custom Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="hospitalSelect">Hospital (Optional)</label>
+                    <select id="hospitalSelect">
+                        <option value="all">All Hospitals</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="emailRecipient">Email Recipient</label>
+                    <input type="email" id="emailRecipient" placeholder="your@email.com" value="demo@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="scheduleFrequency">Schedule Frequency</label>
+                    <select id="scheduleFrequency">
+                        <option value="now">Send Now</option>
+                        <option value="daily">Daily (9 AM)</option>
+                        <option value="weekly">Weekly (Monday 9 AM)</option>
+                        <option value="monthly">Monthly (1st of month)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="report-actions">
+                <button class="btn-primary" id="generateReportBtn">📧 Generate & Send Report</button>
+                <button class="btn-secondary" id="previewReportBtn">👁️ Preview Report</button>
+                <button class="btn-primary btn-success" id="scheduleReportBtn">📅 Schedule Report</button>
+            </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>Generating your report...</p>
+        </div>
+        
+        <!-- Report Preview -->
+        <div class="report-preview" id="reportPreview">
+            <h3>📄 Report Preview</h3>
+            <div class="preview-content" id="previewContent">
+                Loading preview...
+            </div>
+        </div>
+        
+        <!-- Scheduled Reports -->
+        <div class="scheduled-reports">
+            <h3>📅 Scheduled Reports</h3>
+            <div id="scheduledList">
+                <div class="schedule-item">
+                    <div class="schedule-info">
+                        <strong>Daily Summary</strong><br>
+                        <span style="font-size:12px;color:var(--text-muted);">Sent daily at 9:00 AM • demo@example.com</span>
+                    </div>
+                    <div class="schedule-actions">
+                        <span class="badge-scheduled">Active</span>
+                        <button class="delete">✕</button>
+                    </div>
+                </div>
+                <div class="schedule-item">
+                    <div class="schedule-info">
+                        <strong>Weekly Trend</strong><br>
+                        <span style="font-size:12px;color:var(--text-muted);">Sent every Monday at 9:00 AM • admin@hospital.com</span>
+                    </div>
+                    <div class="schedule-actions">
+                        <span class="badge-scheduled">Active</span>
+                        <button class="delete">✕</button>
+                    </div>
+                </div>
+            </div>
+            <p style="color:var(--text-muted);font-size:13px;margin-top:8px;">
+                ⚡ Scheduled reports will be sent to your email automatically.
+            </p>
+        </div>
+        
+        <div class="footer" style="margin-top:32px;">
+            <a href="/api/docs" target="_blank">📚 API Docs</a>
+            <span>•</span>
+            <a href="/map">🗺️ View Map</a>
+            <span>•</span>
+            <a href="/compare">📊 Compare Hospitals</a>
+            <span>•</span>
+            <a href="/trends">📈 Trends</a>
+            <span>•</span>
+            <a href="/peak-hours">⏰ Peak Hours</a>
+            <span>•</span>
+            <span>🇨🇦 Made for Canada</span>
+        </div>
+    </div>
+    
+    <script src="/static/reports.js"></script>
+</body>
+</html>

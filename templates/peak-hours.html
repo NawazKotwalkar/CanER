@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peak Hours - ER Wait Time Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+        
+        /* Peak Hour Cards */
+        .peak-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .peak-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .peak-card .icon { font-size: 32px; display: block; margin-bottom: 8px; }
+        .peak-card .label { color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+        .peak-card .value { color: var(--text-primary); font-size: 24px; font-weight: 700; margin: 4px 0; }
+        .peak-card .sub { color: var(--text-muted); font-size: 13px; }
+        .peak-card .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-danger { background: #ef4444; color: white; }
+        .badge-success { background: #22c55e; color: white; }
+        .badge-warning { background: #eab308; color: white; }
+        .badge-info { background: #3b82f6; color: white; }
+        
+        /* Peak Card Colors */
+        .peak-card.high { border-color: #ef4444; }
+        .peak-card.medium { border-color: #eab308; }
+        .peak-card.low { border-color: #22c55e; }
+        
+        /* Peak Chart Container */
+        .peak-chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .peak-chart-container h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .peak-chart-container .chart-wrapper {
+            position: relative;
+            height: 250px;
+        }
+        
+        /* Peak Legend */
+        .peak-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .peak-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .peak-legend-item .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-orange { background: #f97316; }
+        .dot-yellow { background: #eab308; }
+        .dot-green { background: #22c55e; }
+        
+        /* Controls */
+        .peak-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .peak-controls select {
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-input);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            min-height: 44px;
+            min-width: 160px;
+        }
+        
+        .peak-controls select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        /* Recommendations */
+        .recommendations {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .recommendations h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .recommendation-item:last-child { margin-bottom: 0; }
+        .recommendation-item .rec-icon { font-size: 20px; }
+        .recommendation-item .rec-text { color: var(--text-secondary); font-size: 14px; }
+        .recommendation-item .rec-text strong { color: var(--text-primary); }
+        
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .peak-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .peak-controls { flex-direction: column; width: 100%; }
+            .peak-controls select { width: 100%; min-width: auto; }
+        }
+        @media screen and (max-width: 480px) {
+            .peak-grid { grid-template-columns: 1fr; }
+            .peak-chart-container .chart-wrapper { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left">
+                    <span class="logo">⏰</span>
+                    <div>
+                        <h1>Peak Hour Detection</h1>
+                        <p class="subtitle">Find the best time to visit • Canadian Healthcare</p>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+        
+        <a href="/" class="back-btn">← Back to Predictor</a>
+        
+        <div class="peak-controls">
+            <select id="hospitalSelect" title="Select hospital">
+                <option value="all">All Hospitals</option>
+            </select>
+            <select id="daySelect" title="Select day of the week">
+                <option value="all">All Days</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+            <select id="seasonSelect" title="Select season">
+                <option value="all">All Seasons</option>
+                <option value="Winter">Winter ❄️</option>
+                <option value="Spring">Spring 🌸</option>
+                <option value="Summer">Summer ☀️</option>
+                <option value="Fall">Fall 🍂</option>
+            </select>
+        </div>
+        
+        <!-- Peak Cards -->
+        <div class="peak-grid" id="peakGrid">
+            <div class="peak-card high">
+                <span class="icon">🔴</span>
+                <div class="label">Peak Hour</div>
+                <div class="value" id="peakHour">6:00 PM</div>
+                <div class="sub">80 min wait</div>
+                <span class="badge badge-danger">HIGH</span>
+            </div>
+            <div class="peak-card low">
+                <span class="icon">🟢</span>
+                <div class="label">Quiet Hour</div>
+                <div class="value" id="quietHour">2:00 AM</div>
+                <div class="sub">15 min wait</div>
+                <span class="badge badge-success">LOW</span>
+            </div>
+            <div class="peak-card medium">
+                <span class="icon">🟡</span>
+                <div class="label">Current Status</div>
+                <div class="value" id="currentStatus">Moderate</div>
+                <div class="sub">45 min average</div>
+                <span class="badge badge-warning">MEDIUM</span>
+            </div>
+        </div>
+        
+        <!-- Peak Chart -->
+        <div class="peak-chart-container">
+            <h3>⏰ Hourly Wait Time Distribution</h3>
+            <div class="chart-wrapper">
+                <canvas id="peakChart"></canvas>
+            </div>
+            <div class="peak-legend">
+                <div class="peak-legend-item"><span class="dot dot-red"></span> Peak (&gt; 70 min)</div>
+                <div class="peak-legend-item"><span class="dot dot-orange"></span> Busy (50-70 min)</div>
+                <div class="peak-legend-item"><span class="dot dot-yellow"></span> Moderate (30-50 min)</div>
+                <div class="peak-legend-item"><span class="dot dot-green"></span> Quiet (&lt; 30 min)</div>
+            </div>
+        </div>
+        
+        <!-- Recommendations -->
+        <div class="recommendations" id="recommendations">
+            <h3>💡 Recommendations</h3>
+            <div id="recommendationList">
+                <div class="recommendation-item">
+                    <span class="rec-icon">✅</span>
+                    <span class="rec-text"><strong>Best time:</strong> 2:00 AM - 4:00 AM (15 min wait)</span>
+                </div>
+                <div class="recommendation-item">
+                    <span class="rec-icon">⚠️</span>
+                    <span class="rec-text"><strong>Avoid:</strong> 6:00 PM - 8:00 PM (80 min wait)</span>
+                </div>
+                <div class="recommendation-item">
+                    <span class="rec-icon">📊</span>
+                    <span class="rec-text"><strong>Trend:</strong> Wait times are increasing by 5% per hour after 4 PM</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer footer-top-margin">
+            <a href="/api/docs" target="_blank">📚 API Docs</a>
+            <span>•</span>
+            <a href="/map">🗺️ View Map</a>
+            <span>•</span>
+            <a href="/compare">📊 Compare Hospitals</a>
+            <span>•</span>
+            <a href="/trends">📈 Trends</a>
+            <span>•</span>
+            <span>🇨🇦 Made for Canada</span>
+        </div>
+    </div>
+    <script src="/static/peak-hours.js"></script>
+</body>
+</html>

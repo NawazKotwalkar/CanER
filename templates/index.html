@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ER Wait Time Predictor</title>
+    <title>CanER - Canadian ER Wait Time Predictor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
 </head>
 <body>
-    <div class="container">
+    <div class="container fade-in">
         <div class="header">
             <div class="header-top">
                 <div class="header-left">
                     <span class="logo">🏥</span>
                     <div>
-                        <h1 data-i18n="title">ER Wait Time Predictor</h1>
-                        <p class="subtitle" data-i18n="subtitle">Know before you go • Canadian Healthcare</p>
+                        <h1 data-i18n="title">🇨🇦 CanER</h1>
+                        <p class="subtitle" data-i18n="subtitle">Canadian ER Wait Time Predictor • Proudly Canadian 🇨🇦</p>
                     </div>
                 </div>
                 <div style="display:flex; gap:8px;">
@@ -33,7 +35,7 @@
             <strong data-i18n="emergency">⚠️ Emergency?</strong> <span data-i18n="emergency_call">Call 911 or go to nearest ER</span>
         </div>
         
-        <form id="predictForm">
+        <form id="predictForm" novalidate>
             <div class="form-group">
                 <label for="province" data-i18n="province">Province</label>
                 <select id="province" name="province" title="Select your province" required>
@@ -68,6 +70,7 @@
                 <div class="form-group">
                     <label for="hour" data-i18n="hour">Hour (0-23)</label>
                     <input type="number" id="hour" name="hour" value="10" min="0" max="23" placeholder="Enter hour (0-23)" title="Enter hour between 0 and 23" required>
+                    <span class="validation-error" id="hourError">Please enter a valid hour (0-23)</span>
                 </div>
             </div>
             
@@ -84,20 +87,43 @@
                 <div class="form-group">
                     <label for="triage" data-i18n="triage">Triage Level (1=Critical, 5=Minor)</label>
                     <input type="number" id="triage" name="triage" value="3" min="1" max="5" placeholder="Enter 1-5" title="Enter triage level between 1 and 5" required>
+                    <span class="validation-error" id="triageError">Please enter a valid triage level (1-5)</span>
                 </div>
             </div>
             
-            <button type="submit" class="btn-predict" id="predictBtn" data-i18n="predict">
-                🔮 Predict Wait Time
+            <button type="submit" class="btn-predict" id="predictBtn">
+                <span class="btn-text">🔮 Predict Wait Time</span>
+                <span class="ripple"></span>
             </button>
         </form>
+        
+        <!-- Skeleton Loading -->
+        <div class="skeleton-wrapper" id="skeletonWrapper" style="display:none;">
+            <div class="skeleton-result">
+                <div class="skeleton skeleton-number"></div>
+                <div class="skeleton skeleton-label"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text short"></div>
+            </div>
+        </div>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p data-i18n="analyzing">Analyzing ER data...</p>
         </div>
         
-        <div class="result" id="result"></div>
+        <div class="result" id="result">
+            <div class="result-number">
+                <span id="resultValue">0</span>
+                <span>minutes</span>
+            </div>
+            <div class="result-category" id="resultCategory"></div>
+            <div class="result-recommendation" id="resultRecommendation"></div>
+            <div class="result-details">
+                <p>🆔 <span id="resultId"></span></p>
+                <p>🕐 <span id="resultTimestamp"></span></p>
+            </div>
+        </div>
         
         <!-- Feedback Section -->
         <div class="feedback-section" id="feedbackSection" style="display:none;">
@@ -138,314 +164,6 @@
         </div>
     </div>
     
-    <script>
-        // ============================================
-        // TRANSLATIONS
-        // ============================================
-        
-        const translations = {
-            en: {
-                title: "ER Wait Time Predictor",
-                subtitle: "Know before you go • Canadian Healthcare",
-                emergency: "⚠️ Emergency?",
-                emergency_call: "Call 911 or go to nearest ER",
-                province: "Province",
-                hospital_type: "Hospital Type",
-                urban: "Urban (City)",
-                rural: "Rural",
-                day: "Day of Week",
-                hour: "Hour (0-23)",
-                season: "Season",
-                winter: "Winter ❄️",
-                spring: "Spring 🌸",
-                summer: "Summer ☀️",
-                fall: "Fall 🍂",
-                triage: "Triage Level (1=Critical, 5=Minor)",
-                predict: "🔮 Predict Wait Time",
-                analyzing: "Analyzing ER data...",
-                fast: "Fast 🟢",
-                moderate: "Moderate 🟡",
-                long: "Long 🔴",
-                recommendation_fast: "Go to this ER now",
-                recommendation_moderate: "Consider this ER or check others",
-                recommendation_long: "Try a different hospital if possible",
-                api_docs: "📚 API Docs",
-                view_map: "🗺️ View Map",
-                compare_hospitals: "📊 Compare Hospitals",
-                trends: "📈 Trends",
-                peak_hours: "⏰ Peak Hours",
-                reports: "📧 Reports",
-                accuracy: "📊 Accuracy",
-                made_for_canada: "🇨🇦 Made for Canada",
-                feedback_title: "Was this prediction accurate?",
-                feedback_accurate: "✅ Accurate",
-                feedback_inaccurate: "❌ Inaccurate",
-                feedback_or: "or",
-                feedback_detailed: "📝 Provide Detailed Feedback",
-                feedback_view: "📊 View Accuracy"
-            },
-            fr: {
-                title: "Prédicteur de temps d'attente aux urgences",
-                subtitle: "Sachez avant d'y aller • Santé canadienne",
-                emergency: "⚠️ Urgence?",
-                emergency_call: "Appelez le 911 ou allez aux urgences",
-                province: "Province",
-                hospital_type: "Type d'hôpital",
-                urban: "Urbain (Ville)",
-                rural: "Rural",
-                day: "Jour de la semaine",
-                hour: "Heure (0-23)",
-                season: "Saison",
-                winter: "Hiver ❄️",
-                spring: "Printemps 🌸",
-                summer: "Été ☀️",
-                fall: "Automne 🍂",
-                triage: "Niveau de triage (1=Critique, 5=Mineur)",
-                predict: "🔮 Prédire le temps d'attente",
-                analyzing: "Analyse des données des urgences...",
-                fast: "Rapide 🟢",
-                moderate: "Modéré 🟡",
-                long: "Long 🔴",
-                recommendation_fast: "Allez aux urgences maintenant",
-                recommendation_moderate: "Envisagez ces urgences ou vérifiez ailleurs",
-                recommendation_long: "Essayez un autre hôpital si possible",
-                api_docs: "📚 Documentation API",
-                view_map: "🗺️ Voir la carte",
-                compare_hospitals: "📊 Comparer les hôpitaux",
-                trends: "📈 Tendances",
-                peak_hours: "⏰ Heures de pointe",
-                reports: "📧 Rapports",
-                accuracy: "📊 Précision",
-                made_for_canada: "🇨🇦 Fait pour le Canada",
-                feedback_title: "Cette prédiction était-elle précise?",
-                feedback_accurate: "✅ Précise",
-                feedback_inaccurate: "❌ Imprécise",
-                feedback_or: "ou",
-                feedback_detailed: "📝 Fournir un commentaire détaillé",
-                feedback_view: "📊 Voir la précision"
-            }
-        };
-        
-        // ============================================
-        // LANGUAGE TOGGLE
-        // ============================================
-        
-        let currentLang = localStorage.getItem('lang') || 'en';
-        
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('lang', lang);
-            document.documentElement.setAttribute('data-lang', lang);
-            document.querySelector('.lang-icon').textContent = lang === 'en' ? '🇫🇷' : '🇬🇧';
-            document.querySelector('.lang-toggle').setAttribute('aria-label', lang === 'en' ? 'Passer en français' : 'Switch to English');
-            applyTranslations();
-        }
-        
-        function toggleLanguage() {
-            setLanguage(currentLang === 'en' ? 'fr' : 'en');
-        }
-        
-        function applyTranslations() {
-            const t = translations[currentLang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (t[key]) el.textContent = t[key];
-            });
-        }
-        
-        // ============================================
-        // INIT LANGUAGE
-        // ============================================
-        
-        // Add language toggle click handler
-        document.getElementById('langToggle').addEventListener('click', toggleLanguage);
-        
-        // Apply initial language
-        setLanguage(currentLang);
-        
-        // ============================================
-        // THEME TOGGLE
-        // ============================================
-        
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.querySelector('.theme-icon');
-        const html = document.documentElement;
-        
-        function getPreferredTheme() {
-            const saved = localStorage.getItem('theme');
-            if (saved) return saved;
-            if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-                return 'light';
-            }
-            return 'dark';
-        }
-        
-        function setTheme(theme) {
-            html.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-        }
-        
-        function toggleTheme() {
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            setTheme(next);
-        }
-        
-        setTheme(getPreferredTheme());
-        themeToggle.addEventListener('click', toggleTheme);
-        
-        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) {
-                setTheme(e.matches ? 'light' : 'dark');
-            }
-        });
-        
-        // ============================================
-        // FORM SUBMISSION
-        // ============================================
-        
-        document.getElementById('predictForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btn = document.getElementById('predictBtn');
-            const loading = document.getElementById('loading');
-            const result = document.getElementById('result');
-            
-            btn.disabled = true;
-            loading.classList.add('show');
-            result.classList.remove('show');
-            
-            const data = {
-                province: document.getElementById('province').value,
-                hospital_type: document.getElementById('hospital_type').value,
-                day_of_week: document.getElementById('day').value,
-                hour: parseInt(document.getElementById('hour').value),
-                season: document.getElementById('season').value,
-                triage_level: parseInt(document.getElementById('triage').value)
-            };
-            
-            try {
-                const response = await fetch('/api/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                
-                const resultData = await response.json();
-                
-                loading.classList.remove('show');
-                btn.disabled = false;
-                
-                const t = translations[currentLang];
-                let categoryText, recommendationText;
-                
-                if (resultData.wait_time_category.includes('Fast')) {
-                    categoryText = t.fast;
-                    recommendationText = t.recommendation_fast;
-                } else if (resultData.wait_time_category.includes('Moderate')) {
-                    categoryText = t.moderate;
-                    recommendationText = t.recommendation_moderate;
-                } else {
-                    categoryText = t.long;
-                    recommendationText = t.recommendation_long;
-                }
-                
-                const emoji = resultData.wait_time_category.includes('Fast') ? '🟢' : 
-                             resultData.wait_time_category.includes('Moderate') ? '🟡' : '🔴';
-                
-                result.className = 'result show';
-                result.innerHTML = `
-                    <div class="result-number">
-                        ${resultData.predicted_wait_minutes}
-                        <span>minutes</span>
-                    </div>
-                    <div class="result-category">
-                        ${emoji} ${categoryText}
-                    </div>
-                    <div class="result-recommendation">
-                        💡 ${recommendationText}
-                    </div>
-                    <div class="result-details">
-                        <p>🆔 ${resultData.id}</p>
-                        <p>🕐 ${resultData.timestamp}</p>
-                    </div>
-                `;
-            } catch (err) {
-                loading.classList.remove('show');
-                btn.disabled = false;
-                result.className = 'result show';
-                result.innerHTML = `
-                    <div style="color: #ef4444;">
-                        ❌ Error: Could not predict. Please try again.
-                    </div>
-                `;
-            }
-        });
-        
-        // ============================================
-        // FEEDBACK SYSTEM
-        // ============================================
-        
-        let lastPrediction = null;
-        
-        function showFeedback(predictionData) {
-            const feedbackSection = document.getElementById('feedbackSection');
-            feedbackSection.style.display = 'block';
-            lastPrediction = predictionData;
-        }
-        
-        document.querySelectorAll('.feedback-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const feedback = this.dataset.feedback;
-                if (!lastPrediction) return;
-                
-                document.querySelectorAll('.feedback-btn').forEach(b => b.disabled = true);
-                this.style.opacity = '0.7';
-                
-                try {
-                    const response = await fetch('/api/feedback', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            prediction_id: lastPrediction.id,
-                            predicted_wait: lastPrediction.predicted_wait_minutes,
-                            feedback: feedback,
-                            actual_wait: feedback === 'accurate' ? lastPrediction.predicted_wait_minutes : null
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    if (response.ok) {
-                        this.textContent = feedback === 'accurate' ? '✅ Thank you!' : '❌ Thanks for feedback!';
-                        this.className = 'feedback-btn ' + (feedback === 'accurate' ? 'feedback-btn-thankyou' : 'feedback-btn-thanks-inaccurate');
-                    }
-                } catch (err) {
-                    console.error('Feedback error:', err);
-                }
-            });
-        });
-        
-        document.getElementById('detailedFeedbackBtn').addEventListener('click', function() {
-            if (lastPrediction) {
-                window.location.href = `/feedback?prediction_id=${lastPrediction.id}&predicted=${lastPrediction.predicted_wait_minutes}`;
-            }
-        });
-        
-        const resultDiv = document.getElementById('result');
-        const originalShow = resultDiv.classList.add.bind(resultDiv.classList);
-        resultDiv.classList.add = function(className) {
-            originalShow(className);
-            if (className === 'show') {
-                const predData = {
-                    id: document.querySelector('.result-details p')?.textContent?.replace('🆔 ', '') || 'unknown',
-                    predicted_wait_minutes: parseInt(document.querySelector('.result-number')?.textContent?.trim() || '0')
-                };
-                if (predData.predicted_wait_minutes > 0) {
-                    setTimeout(() => showFeedback(predData), 500);
-                }
-            }
-        };
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 </html>

@@ -15,7 +15,7 @@ app = FastAPI(title="ER Wait Time Predictor")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ============ Load Model & Encoders ============
-model = joblib.load('model/er_model.pkl')
+model = joblib.load('model/er_model_xgb.pkl')
 le_province = joblib.load('model/le_province.pkl')
 le_hospital = joblib.load('model/le_hospital.pkl')
 le_day = joblib.load('model/le_day.pkl')
@@ -105,7 +105,7 @@ async def trends():
 
 @app.get("/api/health")
 async def health():
-    return {"status": "healthy", "model": "LinearRegression"}
+    return {"status": "healthy", "model": "XGBoost"}
 
 @app.get("/reports", response_class=HTMLResponse)
 async def reports():

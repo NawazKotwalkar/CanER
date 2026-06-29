@@ -1,83 +1,90 @@
-# CanER – Canadian ER Wait Time Predictor
+# CanER
+## Canadian Emergency Room Wait Time Predictor
 
-**Know before you go • AI-powered healthcare intelligence for Canada**
-
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)](https://fastapi.tiangolo.com/) [![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange)](https://scikit-learn.org/) [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-
-🇨🇦 **Proudly Canadian** | 🇫🇷 [**Lire en français**](#-canering-time-de-attente-aux-urgences-canadiennes)
+**Know before you go.** CanER predicts emergency room wait times across Canada, helping patients make informed decisions and hospitals optimize resource allocation.
 
 ---
 
-## About CanER
+## The Problem
 
-CanER is a machine learning system that predicts emergency room wait times across Canadian hospitals. It enables patients to make informed decisions about hospital visits while helping healthcare administrators optimize resource allocation.
+- **72% increase** in Canadian ER wait times since 2020
+- Over **30% of hospital beds** occupied by patients who no longer need acute care
+- **60% of Canadians** open to private healthcare options due to wait times
 
-### The Problem
+Canada's emergency departments face compounding capacity pressure. Patients have limited information when deciding where to seek care. Hospitals lack a shared view of demand patterns.
 
-- Canadian ER wait times have increased **72% since 2020**
-- Over **30% of acute care beds** occupied by patients no longer requiring that level of care
-- Patient frustration drives demand for private alternatives, fragmenting care access
-
-### The Solution
-
-CanER predicts wait times with **92.4% accuracy** using Linear Regression, backed by a bilingual web interface that surfaces actionable hospital data at the point of decision.
+CanER closes this gap with machine learning.
 
 ---
 
-## Features
+## What CanER Does
 
-| Feature | Technical Details |
-|---------|-------------------|
-| **Wait Time Prediction** | Linear Regression (R² = 0.924) on historical ER admission & discharge patterns |
-| **Interactive Hospital Map** | Leaflet.js visualization with real-time predicted wait times |
-| **Hospital Comparison** | Side-by-side metrics for up to 4 hospitals (wait time, volume, trends) |
-| **Trend Analysis** | Hourly, weekly, and seasonal decomposition for peak-hour identification |
-| **Email Reports** | Scheduled report generation with prediction summaries |
-| **Bilingual Interface** | English/French with preference persistence |
-| **Prediction Feedback Loop** | Track model accuracy over time; measure residuals by hospital |
-
----
-
-## Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| **Backend** | FastAPI, Python 3.12 |
-| **ML Model** | Scikit-learn (Linear Regression) |
-| **Frontend** | HTML5, CSS3, JavaScript (vanilla) |
-| **Visualization** | Chart.js (trends), Leaflet.js (maps) |
-| **Deployment** | Render.com |
+| Capability | Business Impact |
+|---|---|
+| **Wait time predictions** | Patients reach the ER with realistic expectations; hospitals prepare staffing |
+| **Interactive hospital map** | Find the nearest ER with the shortest predicted wait time |
+| **Hospital comparison** | Side-by-side metrics for up to 4 hospitals (wait time, triage distribution, peak hours) |
+| **Trend analysis** | Identify hourly, daily, and seasonal patterns; understand peak-hour dynamics |
+| **Bilingual interface** | English/French toggle with persistent user preference |
+| **Accuracy dashboard** | Track prediction performance in production; flag drift |
 
 ---
 
-## Quick Start
+## Technical Implementation
 
-### Requirements
+### Model & Performance
+
+- **Algorithm:** XGBoost (gradient boosting for tabular data)
+- **Training data:** 10,000 synthetic patient records based on CIHI NACRS structure
+- **Features:** Province, hospital type, day of week, hour, season, triage level
+- **Baseline:** Linear Regression (provided for comparison)
+
+### Architecture
+
+| Layer | Technology |
+|---|---|
+| **Backend** | FastAPI (Python 3.12) |
+| **ML framework** | XGBoost + Scikit-learn |
+| **Frontend** | HTML5, CSS3, vanilla JavaScript |
+| **Visualization** | Chart.js (line/bar), Leaflet.js (maps) |
+| **Deployment** | Render.com (Docker container) |
+
+### Dataset
+
+- **10,000 records** covering 50+ Canadian hospitals
+- Features modeled on CIHI National Ambulatory Care Reporting System (NACRS)
+- Synthetic but structurally realistic (distributions match real ER patterns)
+
+---
+
+## Getting Started
+
+### Prerequisites
 - Python 3.12+
 - pip
 
-### Installation & Setup
+### Install & Run Locally
 
 ```bash
 # Clone repository
 git clone https://github.com/NawazKotwalkar/CanER.git
 cd CanER
 
-# Create & activate virtual environment
+# Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Train ML model
-python model/train.py
+# Train the model
+python model/train_xgboost.py
 
-# Launch app
+# Start the server
 python app.py
 ```
 
-Open **http://localhost:8000** in your browser.
+Visit `http://localhost:8000` in your browser.
 
 ---
 
@@ -85,277 +92,163 @@ Open **http://localhost:8000** in your browser.
 
 ```
 CanER/
-├── app.py                    # FastAPI entry point
+├── app.py                    # FastAPI application entry point
 ├── model/
-│   ├── train.py             # Model training pipeline
-│   └── model.pkl            # Trained Linear Regression model
+│   ├── train_xgboost.py     # XGBoost model training pipeline
+│   └── train.py             # Linear Regression baseline
 ├── data/
-│   └── er_data.csv          # Training dataset
-├── templates/
-│   ├── index.html           # Homepage
-│   ├── map.html             # Interactive map
-│   ├── compare.html         # Hospital comparison
-│   └── trends.html          # Trend analysis
+│   └── sample_data.csv      # 10,000 training records
+├── templates/               # HTML pages
+│   ├── index.html
+│   ├── map.html
+│   ├── compare.html
+│   ├── trends.html
+│   ├── peak_hours.html
+│   ├── reports.html
+│   └── feedback.html
 ├── static/
-│   ├── style.css            # Styling
-│   ├── map.js               # Map initialization & logic
-│   ├── compare.js           # Comparison widget
-│   └── trends.js            # Chart rendering
+│   ├── style.css            # Canadian-theme stylesheet
+│   ├── script.js
+│   ├── map.js
+│   ├── trends.js
+│   ├── compare.js
+│   ├── peak_hours.js
+│   ├── reports.js
+│   └── feedback.js
 ├── requirements.txt
-├── README.md
+├── Dockerfile
 ├── LICENSE
-└── .gitignore
+└── README.md
 ```
 
 ---
 
-## Model Performance
+## Key Features
 
-The Linear Regression model achieves **R² = 0.924** on validation data. Key predictors include:
+### 1. Wait Time Prediction
+Submit hospital, time of day, and triage level; receive predicted wait time in minutes.
 
-- Admission volume (t-1, t-2)
-- Day of week & hour of day
-- Seasonal indicators
-- Hospital bed capacity
+### 2. Interactive Map
+- Real-time color-coded hospital locations (red = long waits, green = short waits)
+- Click any hospital for full details and trend view
+- Search by province or postal code
 
-**Next iteration:** Explore ensemble methods (Random Forest, Gradient Boosting) to capture non-linear dynamics, particularly for peak-hour prediction accuracy.
+### 3. Hospital Comparison
+Compare up to 4 hospitals simultaneously:
+- Predicted wait times by hour
+- Triage level distribution
+- Peak hours and quietest times
+
+### 4. Trend Analysis
+- **Hourly patterns:** Which hours have longest waits?
+- **Weekly patterns:** Day-of-week effects
+- **Seasonal patterns:** Summer vs. winter differences
+- **Historical accuracy:** Predicted vs. actual wait times
+
+### 5. Bilingual Support
+- English/French toggle
+- User preference saved in browser localStorage
+- All UI text, labels, and charts bilingual
+
+### 6. Accuracy Dashboard
+Monitor model performance:
+- Mean Absolute Error (MAE) by hospital
+- Prediction confidence intervals
+- Drift detection (when predictions diverge from actual)
 
 ---
 
-## API Endpoints
+## Canadian Theming
 
-```
-GET  /                          # Homepage
-GET  /map                       # Interactive map view
-GET  /compare                   # Hospital comparison
-GET  /trends                    # Trend analysis
-GET  /api/predict              # POST wait time prediction
-GET  /api/hospitals            # Fetch all hospitals + metadata
-GET  /api/trends/<hospital_id> # Fetch trend data
-POST /api/feedback             # Log prediction feedback
-```
+- **Color palette:** Canadian red (#C8102E) + white + steel blue accents
+- **Typography:** Typographic hierarchy with sans-serif body (accessibility-first)
+- **Visuals:** Animated maple leaf motif; flag-inspired layout
+- **Dark/Light mode:** User preference persisted
 
 ---
 
 ## Deployment
 
-CanER is ready for production deployment on **Render.com**:
+Deployed on **Render.com** with:
+- Docker containerization
+- Environment-based configuration
+- Automatic redeploys on GitHub push
 
-1. Push code to GitHub
-2. Connect repository to Render
-3. Set Python runtime to 3.12
-4. Deploy
-
-See `Procfile` for start command.
+**Live at:** [https://caner.onrender.com](https://caner.onrender.com)
 
 ---
 
-## What's Next
+## Performance Notes
 
-- [ ] Implement ensemble models (Random Forest, XGBoost) for improved accuracy
-- [ ] Add hospital resource data (staffing, bed occupancy) as predictors
-- [ ] Build admin dashboard for prediction monitoring & model retraining
-- [ ] Integrate live ER data feeds from provincial health systems (where available)
-- [ ] A/B test impact of predictions on patient routing decisions
+- **Training time:** ~2 seconds on CPU (3,000 trees)
+- **Inference time:** <50ms per prediction
+- **Model size:** ~8MB (compressed XGBoost artifact)
+- **Browser compatibility:** Chrome, Firefox, Safari, Edge (ES6+)
 
 ---
 
-## Contributing
+## Known Limitations
 
-Contributions are welcome. Please open an issue for bugs or feature requests.
+- **Synthetic data:** Real-world model would require access to provincial/hospital ER data (CIHI NACRS)
+- **Scope:** Predictions assume normal operations; does not account for major incidents, disasters, or policy changes
+- **Granularity:** Predictions at hospital level; no unit-specific (e.g., trauma bay) breakdowns
+- **Updates:** Model trained on static dataset; periodic retraining needed for production drift
+
+---
+
+## Future Roadmap
+
+- [ ] Integration with real CIHI NACRS data (provincial health ministries)
+- [ ] Real-time bed occupancy feed from hospital systems
+- [ ] Mobile app (React Native)
+- [ ] SMS alerts ("Wait time at [Hospital] now 120 min")
+- [ ] Multimodel ensemble (XGBoost + LSTM for temporal patterns)
+- [ ] Causal analysis: which staffing policies reduce waits most?
+
+---
+
+## Development
+
+### Running Tests
+```bash
+pytest tests/
+```
+
+### Code Standards
+- Black (code formatting)
+- Flake8 (linting)
+- Type hints throughout
+
+### Contributing
+Pull requests welcome. Please open an issue first to discuss major changes.
 
 ---
 
 ## License
 
-MIT License – see [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-## Author
+## About
 
-**Nawaz Kotwalkar**  
-B.Sc. Data Science | Machine Learning Engineer  
-[GitHub](https://github.com/NawazKotwalkar) | [LinkedIn](https://linkedin.com/in/nawazkotwalkar)
+**Nawaz**  
+B.Sc. Data Science, University of Mumbai  
+Toronto-based • Open to remote roles
 
----
-
----
-
-# 🇫🇷 CanER – Prédicteur de temps d'attente aux urgences canadiennes
-
-**Sachez avant d'y aller • Intelligence de santé alimentée par l'IA pour le Canada**
+[GitHub](https://github.com/NawazKotwalkar) — [LinkedIn](https://linkedin.com/in/nawazkotwalkar)
 
 ---
 
-## À propos de CanER
+## Why This Matters
 
-CanER est un système d'apprentissage automatique qui prédit les temps d'attente aux urgences dans les hôpitaux canadiens. Il permet aux patients de prendre des décisions éclairées concernant les visites hospitalières et aide les administrateurs de la santé à optimiser l'allocation des ressources.
+Canada's healthcare system is under stress. Better information flow between patients and hospitals can:
+- **Reduce unnecessary ER visits** by directing non-urgent cases to alternatives (urgent care, walk-in clinics)
+- **Improve patient outcomes** by reducing time-to-treatment for true emergencies
+- **Inform policy** with data on which interventions (staffing, bed expansion, incentive structures) actually move the needle
 
-### Le problème
-
-- Les temps d'attente aux urgences canadiennes ont augmenté de **72 % depuis 2020**
-- Plus de **30 % des lits de soins aigus** occupés par des patients ne nécessitant plus ce niveau de soins
-- La frustration des patients augmente la demande d'alternatives privées, fragmentant l'accès aux soins
-
-### La solution
-
-CanER prédit les temps d'attente avec une **précision de 92,4 %** en utilisant la régression linéaire, soutenue par une interface Web bilingue qui présente des données hospitalières exploitables au moment de la décision.
+CanER is a proof of concept for data-driven healthcare management in Canada.
 
 ---
 
-## Caractéristiques
-
-| Caractéristique | Détails techniques |
-|-----------------|-------------------|
-| **Prédiction du temps d'attente** | Régression linéaire (R² = 0,924) basée sur les modèles historiques d'admission et de sortie aux urgences |
-| **Carte hospitalière interactive** | Visualisation Leaflet.js avec temps d'attente prédits en temps réel |
-| **Comparaison d'hôpitaux** | Métriques côte à côte pour jusqu'à 4 hôpitaux (temps d'attente, volume, tendances) |
-| **Analyse des tendances** | Décomposition horaire, hebdomadaire et saisonnière pour l'identification des heures de pointe |
-| **Rapports par email** | Génération de rapports programmés avec résumés de prédictions |
-| **Interface bilingue** | Anglais/français avec persistance des préférences |
-| **Boucle de retour de prédiction** | Suivi de la précision du modèle au fil du temps ; mesure des résidus par hôpital |
-
----
-
-## Pile technologique
-
-| Composant | Technologie |
-|-----------|-------------|
-| **Backend** | FastAPI, Python 3.12 |
-| **Modèle ML** | Scikit-learn (régression linéaire) |
-| **Frontend** | HTML5, CSS3, JavaScript (vanilla) |
-| **Visualisation** | Chart.js (tendances), Leaflet.js (cartes) |
-| **Déploiement** | Render.com |
-
----
-
-## Démarrage rapide
-
-### Exigences
-- Python 3.12+
-- pip
-
-### Installation et configuration
-
-```bash
-# Cloner le référentiel
-git clone https://github.com/NawazKotwalkar/CanER.git
-cd CanER
-
-# Créer et activer l'environnement virtuel
-python -m venv venv
-source venv/bin/activate  # Sur Windows : venv\Scripts\activate
-
-# Installer les dépendances
-pip install -r requirements.txt
-
-# Entraîner le modèle ML
-python model/train.py
-
-# Lancer l'application
-python app.py
-```
-
-Ouvrez **http://localhost:8000** dans votre navigateur.
-
----
-
-## Structure du projet
-
-```
-CanER/
-├── app.py                    # Point d'entrée FastAPI
-├── model/
-│   ├── train.py             # Pipeline de formation du modèle
-│   └── model.pkl            # Modèle de régression linéaire entraîné
-├── data/
-│   └── er_data.csv          # Ensemble de données d'entraînement
-├── templates/
-│   ├── index.html           # Page d'accueil
-│   ├── map.html             # Carte interactive
-│   ├── compare.html         # Comparaison d'hôpitaux
-│   └── trends.html          # Analyse des tendances
-├── static/
-│   ├── style.css            # Style
-│   ├── map.js               # Initialisation et logique de carte
-│   ├── compare.js           # Widget de comparaison
-│   └── trends.js            # Rendu de graphique
-├── requirements.txt
-├── README.md
-├── LICENSE
-└── .gitignore
-```
-
----
-
-## Performance du modèle
-
-Le modèle de régression linéaire atteint **R² = 0,924** sur les données de validation. Les prédicteurs clés incluent :
-
-- Volume d'admission (t-1, t-2)
-- Jour de la semaine et heure du jour
-- Indicateurs saisonniers
-- Capacité de lits d'hôpital
-
-**Prochaine itération :** Explorer les modèles d'ensemble (forêt aléatoire, gradient boosting) pour capturer les dynamiques non linéaires, en particulier pour la précision de prédiction aux heures de pointe.
-
----
-
-## Points de terminaison API
-
-```
-GET  /                          # Page d'accueil
-GET  /map                       # Vue de carte interactive
-GET  /compare                   # Comparaison d'hôpitaux
-GET  /trends                    # Analyse des tendances
-GET  /api/predict              # Prédiction POST du temps d'attente
-GET  /api/hospitals            # Récupérer tous les hôpitaux + métadonnées
-GET  /api/trends/<hospital_id> # Récupérer les données de tendance
-POST /api/feedback             # Enregistrer les commentaires de prédiction
-```
-
----
-
-## Déploiement
-
-CanER est prêt pour le déploiement en production sur **Render.com** :
-
-1. Poussez le code vers GitHub
-2. Connectez le référentiel à Render
-3. Définissez le runtime Python sur 3.12
-4. Déployer
-
-Voir `Procfile` pour la commande de démarrage.
-
----
-
-## Prochaines étapes
-
-- [ ] Implémenter des modèles d'ensemble (forêt aléatoire, XGBoost) pour améliorer la précision
-- [ ] Ajouter des données de ressources hospitalières (personnel, occupation des lits) en tant que prédicteurs
-- [ ] Créer un tableau de bord administrateur pour le suivi des prédictions et le réentraînement du modèle
-- [ ] Intégrer les flux de données d'urgences en direct des systèmes de santé provinciaux (le cas échéant)
-- [ ] Test A/B de l'impact des prédictions sur les décisions d'orientation des patients
-
----
-
-## Contribution
-
-Les contributions sont les bienvenues. Veuillez ouvrir un problème pour les bogues ou les demandes de fonctionnalités.
-
----
-
-## Licence
-
-Licence MIT – voir [LICENSE](LICENSE) pour plus de détails.
-
----
-
-## Auteur
-
-**Nawaz Kotwalkar**  
-B.Sc. Data Science | Machine Learning Engineer  
-[GitHub](https://github.com/NawazKotwalkar) | [LinkedIn](https://linkedin.com/in/nawazkotwalkar)
-
----
+Made with ❤️ for Canada 🍁

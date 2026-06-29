@@ -1,0 +1,46 @@
+Hospital,City,Province,Department,Date,Patients_Seen,Avg_Wait_Minutes,Target_Minutes,Met_Target
+Toronto General,Toronto,ON,Emergency,2024-01-15,145,89,120,Yes
+Vancouver General,Vancouver,BC,Emergency,2024-01-15,112,76,120,Yes
+Montreal General,Montreal,QC,Emergency,2024-01-15,98,134,120,No
+Calgary Foothills,Calgary,AB,Emergency,2024-01-15,87,145,120,No
+Ottawa Civic,Ottawa,ON,Emergency,2024-01-15,103,92,120,Yes
+Toronto General,Toronto,ON,Surgery,2024-02-01,23,210,180,No
+Vancouver General,Vancouver,BC,Surgery,2024-02-01,18,165,180,Yes
+Montreal General,Montreal,QC,Surgery,2024-02-01,15,240,180,No
+Calgary Foothills,Calgary,AB,Surgery,2024-02-01,20,175,180,Yes
+Ottawa Civic,Ottawa,ON,Surgery,2024-02-01,17,190,180,No
+Toronto General,Toronto,ON,Diagnostic Imaging,2024-03-10,75,45,60,Yes
+Vancouver General,Vancouver,BC,Diagnostic Imaging,2024-03-10,82,55,60,Yes
+Montreal General,Montreal,QC,Diagnostic Imaging,2024-03-10,68,78,60,No
+Calgary Foothills,Calgary,AB,Diagnostic Imaging,2024-03-10,90,42,60,Yes
+Ottawa Civic,Ottawa,ON,Diagnostic Imaging,2024-03-10,55,65,60,No
+Toronto General,Toronto,ON,Emergency,2024-06-20,160,95,120,Yes
+Vancouver General,Vancouver,BC,Emergency,2024-06-20,130,130,120,No
+Montreal General,Montreal,QC,Emergency,2024-06-20,110,145,120,No
+Calgary Foothills,Calgary,AB,Emergency,2024-06-20,95,110,120,Yes
+Ottawa Civic,Ottawa,ON,Emergency,2024-06-20,108,88,120,Yes
+Toronto General,Toronto,ON,Surgery,2024-07-15,25,195,180,No
+Vancouver General,Vancouver,BC,Surgery,2024-07-15,30,170,180,Yes
+Montreal General,Montreal,QC,Surgery,2024-07-15,22,255,180,No
+Calgary Foothills,Calgary,AB,Surgery,2024-07-15,28,160,180,Yes
+Ottawa Civic,Ottawa,ON,Surgery,2024-07-15,19,185,180,No
+Toronto General,Toronto,ON,Diagnostic Imaging,2024-09-05,80,50,60,Yes
+Vancouver General,Vancouver,BC,Diagnostic Imaging,2024-09-05,85,58,60,Yes
+Montreal General,Montreal,QC,Diagnostic Imaging,2024-09-05,70,85,60,No
+Calgary Foothills,Calgary,AB,Diagnostic Imaging,2024-09-05,95,40,60,Yes
+Ottawa Civic,Ottawa,ON,Diagnostic Imaging,2024-09-05,60,70,60,No
+Toronto General,Toronto,ON,Emergency,2024-11-01,180,102,120,Yes
+Vancouver General,Vancouver,BC,Emergency,2024-11-01,140,145,120,No
+Montreal General,Montreal,QC,Emergency,2024-11-01,120,150,120,No
+Calgary Foothills,Calgary,AB,Emergency,2024-11-01,100,115,120,Yes
+Ottawa Civic,Ottawa,ON,Emergency,2024-11-01,115,95,120,Yes
+Toronto General,Toronto,ON,Surgery,2025-01-20,22,205,180,No
+Vancouver General,Vancouver,BC,Surgery,2025-01-20,20,155,180,Yes
+Montreal General,Montreal,QC,Surgery,2025-01-20,16,230,180,No
+Calgary Foothills,Calgary,AB,Surgery,2025-01-20,26,168,180,Yes
+Ottawa Civic,Ottawa,ON,Surgery,2025-01-20,21,188,180,No
+Toronto General,Toronto,ON,Diagnostic Imaging,2025-03-12,85,48,60,Yes
+Vancouver General,Vancouver,BC,Diagnostic Imaging,2025-03-12,88,52,60,Yes
+Montreal General,Montreal,QC,Diagnostic Imaging,2025-03-12,72,90,60,No
+Calgary Foothills,Calgary,AB,Diagnostic Imaging,2025-03-12,92,38,60,Yes
+Ottawa Civic,Ottawa,ON,Diagnostic Imaging,2025-03-12,65,72,60,No

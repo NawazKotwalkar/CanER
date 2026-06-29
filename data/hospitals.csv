@@ -1,0 +1,41 @@
+name,address,city,province,latitude,longitude,type,beds,rating
+Toronto General Hospital,200 Elizabeth St,Toronto,ON,43.6596,-79.3852,Urban,850,4.2
+St. Michael's Hospital,30 Bond St,Toronto,ON,43.6541,-79.3796,Urban,720,4.0
+Sunnybrook Health Sciences Centre,2075 Bayview Ave,Toronto,ON,43.7304,-79.3791,Urban,900,4.5
+North York General Hospital,4001 Leslie St,Toronto,ON,43.7674,-79.4110,Urban,650,3.9
+Scarborough General Hospital,3050 Lawrence Ave E,Toronto,ON,43.7742,-79.2397,Urban,600,3.8
+Vancouver General Hospital,855 W 12th Ave,Vancouver,BC,49.2637,-123.1153,Urban,880,4.3
+St. Paul's Hospital,1081 Burrard St,Vancouver,BC,49.2813,-123.1284,Urban,700,4.1
+Royal Columbian Hospital,330 E Columbia St,New Westminster,BC,49.2232,-122.8893,Urban,550,3.7
+Montreal General Hospital,1650 Cedar Ave,Montreal,QC,45.4972,-73.5889,Urban,750,4.0
+Jewish General Hospital,3755 Côte-Sainte-Catherine Rd,Montreal,QC,45.4827,-73.6343,Urban,680,3.9
+Quebec City CHU,10 Rue de l'Espinay,Quebec City,QC,46.8287,-71.2649,Urban,800,4.2
+Calgary Foothills Medical Centre,1403 29 St NW,Calgary,AB,51.0706,-114.1300,Urban,820,4.3
+Edmonton Royal Alexandra Hospital,10240 Kingsway NW,Edmonton,AB,53.5647,-113.4867,Urban,620,3.8
+South Calgary Health Campus,4448 Front St SE,Calgary,AB,50.9321,-114.0847,Urban,580,4.0
+Ottawa General Hospital,501 Smyth Rd,Ottawa,ON,45.4049,-75.6486,Urban,780,4.1
+Hamilton General Hospital,237 Barton St E,Hamilton,ON,43.2598,-79.8717,Urban,660,3.9
+London Health Sciences Centre,800 Commissioners Rd E,London,ON,42.9876,-81.2382,Urban,840,4.4
+Winnipeg Health Sciences Centre,700 William Ave,Winnipeg,MB,49.9068,-97.1370,Urban,640,3.7
+Halifax Infirmary,1796 Summer St,Halifax,NS,44.6540,-63.5880,Urban,720,4.0
+Saskatoon Royal University Hospital,103 Hospital Dr,Saskatoon,SK,52.1200,-106.6590,Urban,580,3.6
+Kelowna General Hospital,2268 Pandosy St,Kelowna,BC,49.8834,-119.4900,Urban,560,3.9
+Moncton Hospital,135 MacBeath Ave,Moncton,NB,46.0932,-64.7735,Urban,600,3.8
+St. John's Health Sciences Centre,300 Prince Philip Dr,St. John's,NL,47.5780,-52.7070,Urban,540,3.5
+Victoria General Hospital,1 Hospital Way,Victoria,BC,48.4350,-123.3270,Urban,740,4.1
+Regina General Hospital,1440 14th Ave,Regina,SK,50.4490,-104.6470,Urban,520,3.4
+Timmins District Hospital,700 Ross Ave E,Timmins,ON,48.4821,-81.3236,Rural,250,3.6
+Kenora District Hospital,21 Sylvan St W,Kenora,ON,49.7679,-94.4860,Rural,180,3.4
+Prince George Regional Hospital,1300 Hospital St,Prince George,BC,53.9154,-122.7643,Rural,300,3.7
+Red Deer Regional Hospital,3942 50A Ave,Red Deer,AB,52.2681,-113.8117,Rural,280,3.5
+Moose Jaw Union Hospital,455 Fairford St E,Moose Jaw,SK,50.3937,-105.5330,Rural,200,3.3
+Brandon Regional Health Centre,150 McTavish Ave E,Brandon,MB,49.8351,-99.9494,Rural,260,3.6
+Colchester East Hants Health Centre,600 Abenaki Rd,Truro,NS,45.3635,-63.2912,Rural,220,3.4
+Western Memorial Regional Hospital,1 James Larkin Way,Corner Brook,NL,48.9548,-57.9358,Rural,200,3.3
+Chaleur Regional Hospital,1750 Sunset Dr,Bathurst,NB,47.6212,-65.6317,Rural,190,3.2
+Sault Area Hospital,750 Great Northern Rd,Sault Ste. Marie,ON,46.5203,-84.3235,Rural,320,3.6
+Thunder Bay Regional Health Sciences Centre,980 Oliver Rd,Thunder Bay,ON,48.4109,-89.2447,Rural,380,3.7
+Health Sciences North,41 Ramsey Lake Rd,Sudbury,ON,46.4893,-80.9981,Rural,400,3.8
+Peterborough Regional Health Centre,1 Hospital Dr,Peterborough,ON,44.3093,-78.3196,Rural,350,3.6
+Brantford General Hospital,200 Terrace Hill St,Brantford,ON,43.1387,-80.2634,Rural,300,3.5
+Guelph General Hospital,115 Delhi St,Guelph,ON,43.5450,-80.2567,Rural,280,3.7

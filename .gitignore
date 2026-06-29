@@ -8,14 +8,18 @@ env/
 ENV/
 .venv/
 
-# Model files
+# Model files - BLOCK ALL BUT ALLOW SPECIFIC
 *.pkl
 *.joblib
+!model/*.pkl
+!model/*.joblib
 
-# Data
+# Data - BLOCK ALL BUT ALLOW SPECIFIC
 data/raw/
 data/processed/
 *.csv
+!data/sample_data.csv
+!data/hospital.csv
 
 # IDE
 .vscode/
@@ -32,3 +36,8 @@ Thumbs.db
 
 # Docker
 *.pid
+
+# Secrets
+*secret*.txt
+*token*.txt
+*.env.local
